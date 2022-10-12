@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify, session
 from app.models import User, Post, Comment, Vote
 from app.db import get_db
 import sys
+from app.utils.auth import login_required
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
@@ -64,6 +65,7 @@ def login():
 
 # This takes care of the first step: connecting to the database. Because this is a POST route, we can capture the posted data by using the get_json() method and create a new comment by using the returned dictionary. Because the creation of a comment can fail, we want to wrap it in a try...except statement.
 @bp.route('/comments', methods=['POST'])
+@login_required
 def comment():
   data = request.get_json()
   db = get_db()
@@ -87,6 +89,7 @@ def comment():
   return jsonify(id = newComment.id)
 
 @bp.route('/posts/upvote', methods=['PUT'])
+@login_required
 def upvote():
   data = request.get_json()
   db = get_db()
@@ -109,6 +112,7 @@ def upvote():
   return '', 204
 
 @bp.route('/posts', methods=['POST'])
+@login_required
 def create():
   data = request.get_json()
   db = get_db()
@@ -132,6 +136,7 @@ def create():
   return jsonify(id = newPost.id)
 
 @bp.route('/posts/<id>', methods=['PUT'])
+@login_required
 def update(id):
   data = request.get_json()
   db = get_db()
@@ -150,6 +155,7 @@ def update(id):
   return '', 204
 
 @bp.route('/posts/<id>', methods=['DELETE'])
+@login_required
 def delete(id):
   db = get_db()
 
